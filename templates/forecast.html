@@ -1,0 +1,221 @@
+{% extends "base.html" %}
+
+{% block title %}Product Forecast - {{ product_info.name }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">
+        <i class="fas fa-chart-line me-2"></i>Forecast: {{ product_info.name }}
+    </h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="btn-group me-2">
+            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="downloadForecast()">
+                <i class="fas fa-download me-1"></i>Download Forecast
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Product Info -->
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <h6 class="text-muted">Product Name</h6>
+                        <p class="mb-0"><strong>{{ product_info.name }}</strong></p>
+                    </div>
+                    <div class="col-md-3">
+                        <h6 class="text-muted">Category</h6>
+                        <p class="mb-0"><span class="badge bg-primary">{{ product_info.category }}</span></p>
+                    </div>
+                    <div class="col-md-3">
+                        <h6 class="text-muted">Price</h6>
+                        <p class="mb-0">${{ "%.2f"|format(product_info.price) }}</p>
+                    </div>
+                    <div class="col-md-3">
+                        <h6 class="text-muted">Product ID</h6>
+                        <p class="mb-0">{{ product_info.id }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Model Performance -->
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h6 class="mb-0"><i class="fas fa-line-chart me-2"></i>Linear Regression</h6>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-6">
+                        <div class="metric-value text-primary">{{ "%.3f"|format(evaluations.linear.R2) }}</div>
+                        <small class="text-muted">R² Score</small>
+                    </div>
+                    <div class="col-6">
+                        <div class="metric-value text-primary">{{ "%.1f"|format(evaluations.linear.MAPE) }}%</div>
+                        <small class="text-muted">MAPE</small>
+                    </div>
+                </div>
+                <hr>
+                <small class="text-muted">
+                    RMSE: {{ "%.2f"|format(evaluations.linear.RMSE) }}<br>
+                    MAE: {{ "%.2f"|format(evaluations.linear.MAE) }}
+                </small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h6 class="mb-0"><i class="fas fa-chart-area me-2"></i>Ridge Regression</h6>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-6">
+                        <div class="metric-value text-success">{{ "%.3f"|format(evaluations.ridge.R2) }}</div>
+                        <small class="text-muted">R² Score</small>
+                    </div>
+                    <div class="col-6">
+                        <div class="metric-value text-success">{{ "%.1f"|format(evaluations.ridge.MAPE) }}%</div>
+                        <small class="text-muted">MAPE</small>
+                    </div>
+                </div>
+                <hr>
+                <small class="text-muted">
+                    RMSE: {{ "%.2f"|format(evaluations.ridge.RMSE) }}<br>
+                    MAE: {{ "%.2f"|format(evaluations.ridge.MAE) }}
+                </small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header bg-warning text-white">
+                <h6 class="mb-0"><i class="fas fa-tree me-2"></i>Random Forest</h6>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-6">
+                        <div class="metric-value text-warning">{{ "%.3f"|format(evaluations.rf.R2) }}</div>
+                        <small class="text-muted">R² Score</small>
+                    </div>
+                    <div class="col-6">
+                        <div class="metric-value text-warning">{{ "%.1f"|format(evaluations.rf.MAPE) }}%</div>
+                        <small class="text-muted">MAPE</small>
+                    </div>
+                </div>
+                <hr>
+                <small class="text-muted">
+                    RMSE: {{ "%.2f"|format(evaluations.rf.RMSE) }}<br>
+                    MAE: {{ "%.2f"|format(evaluations.rf.MAE) }}
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Plots -->
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Historical Demand</h5>
+            </div>
+            <div class="card-body">
+                <div id="historical-plot"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Model Predictions Comparison</h5>
+            </div>
+            <div class="card-body">
+                <div id="comparison-plot"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">30-Day Forecast</h5>
+            </div>
+            <div class="card-body">
+                <div id="future-plot"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Feature Importance -->
+{% if feature_importance %}
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Feature Importance (Random Forest)</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Feature</th>
+                                <th>Importance</th>
+                                <th>Visualization</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for feature in feature_importance %}
+                            <tr>
+                                <td>{{ feature.feature }}</td>
+                                <td>{{ "%.4f"|format(feature.importance) }}</td>
+                                <td>
+                                    <div class="progress" style="height: 20px;">
+                                        <div class="progress-bar" role="progressbar" 
+                                             style="width: {{ (feature.importance * 100)|round(1) }}%">
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Render plots
+var historicalPlot = {{ plots.historical|safe }};
+var comparisonPlot = {{ plots.comparison|safe }};
+var futurePlot = {{ plots.future|safe }};
+
+Plotly.newPlot('historical-plot', historicalPlot.data, historicalPlot.layout);
+Plotly.newPlot('comparison-plot', comparisonPlot.data, comparisonPlot.layout);
+Plotly.newPlot('future-plot', futurePlot.data, futurePlot.layout);
+
+function downloadForecast() {
+    alert('Download functionality coming soon!');
+}
+</script>
+{% endblock %}

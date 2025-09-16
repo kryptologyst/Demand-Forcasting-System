@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}Analytics Dashboard{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">
+        <i class="fas fa-analytics me-2"></i>Analytics Dashboard
+    </h1>
+</div>
+
+<!-- Analytics Plots -->
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Sales Trends by Category</h5>
+            </div>
+            <div class="card-body">
+                <div id="category-trends-plot"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">Top Products by Revenue</h5>
+            </div>
+            <div class="card-body">
+                <div id="top-products-plot"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Render analytics plots
+{% if plots.category_trends %}
+var categoryTrendsPlot = {{ plots.category_trends|safe }};
+Plotly.newPlot('category-trends-plot', categoryTrendsPlot.data, categoryTrendsPlot.layout);
+{% endif %}
+
+{% if plots.top_products %}
+var topProductsPlot = {{ plots.top_products|safe }};
+Plotly.newPlot('top-products-plot', topProductsPlot.data, topProductsPlot.layout);
+{% endif %}
+</script>
+{% endblock %}
