@@ -13,14 +13,8 @@ A comprehensive demand forecasting system that predicts future product demand ba
 
 ## Screenshots
 
-### Dashboard
-![Dashboard](screenshots/dashboard.png)
+<img width="1073" height="789" alt="Screenshot 2025-09-11 at 10 01 56 PM" src="https://github.com/user-attachments/assets/c0a2ebe9-0b65-4f34-8d48-ca3b0d36a93d" />
 
-### Product Forecast
-![Product Forecast](screenshots/product_forecast.png)
-
-### Analytics
-![Analytics](screenshots/analytics.png)
 
 ## 🛠️ Installation
 
